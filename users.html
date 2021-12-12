@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <title>Hello, world!</title>
+  </head>
+  <body class="bg-primary">
+      <h1 class="text-white text-center m-5">List Users</h1>
+      <div class="container table-responsive pt-4 pb-4 bg-light">   
+         <a href="./productos.html"> <input type="button" value="List Products  " class="btn btn-primary mb-3"></a>
+          <a href="./cruds/crudUsers/agregarUsers.html"><input type="button" value="Agregar" class="btn btn-success mb-3"></a>
+
+          <table id="userList" class="table table-bordered table-hover table-striped">
+              <thead class="thead-light">
+                  <tr>
+                      
+                    <th scope="col">Identificacion</th>
+                    <th scope="col">Nombres</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Direccion</th>
+
+                    <th scope="col">Tipo Usuario</th>
+                    <th scope="col">Zona</th>
+                    <th scope="col">Editar</th>
+                    <th scope="col">Eliminar</th>
+            
+        </tr>
+    </thead>
+    <tbody id="tbody">
+        
+        
+        
+    </tbody>
+    </table>
+    
+</div>    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script>
+      /*-------------------------------------*/
+      const url = "http://144.22.56.156:8080/"
+const tbody = document.getElementById('tbody')
+
+/* -------------  GET USERS  -------------------------*/
+const traeUsers = $.ajax({
+    method:"GET",
+    url: url + "api/user/all"
+})
+traeUsers.done((arrayUsers)=>{
+    for(user of arrayUsers){
+    tbody.innerHTML += 
+    '<tr><th scope="col">'+user.identification  +'</th>'
+    +'<th scope="col">'+user.name+'</th>'
+    +'<th scope="col">'+user.email+'</th>'
+    +'<th scope="col">'+user.address+'</th>'
+    +'<th scope="col">'+user.type+'</th>'
+    +'<th scope="col">'+user.zone+'</th>'
+    +'<th scope="col"><a href="./cruds/crudUsers/editarUsers.html">Editar</a></th>'
+    +'<th scope="col" class="accionBtn">Eliminar</th></tr>'
+}
+})
+/* -------------------------------------------------- */
+
+let idEliminar;
+tbody.addEventListener("click",(x)=>{
+
+    if(x.path[0].childNodes[0].data == "Eliminar"){
+        idUser = x.path[2].children[0].cells[0].childNodes[0].data
+
+        /* -----------   DELETE USER  -----------------*/
+        traeUsers.done((arrayUsers)=>{
+            for(user of arrayUsers){
+                if(idUser == user.identification){
+                    idEliminar = user.id
+                    
+                    /* ------ */
+                    $.ajax({
+                        method:"DELETE",
+                        url:url +"api/user/" + idEliminar 
+                    }).done(()=> {
+                        alert("¡¡Usuario eliminado con exito!!")
+                        location.reload();
+                    }).fail(function(){
+                        console.log("fallo en ajax")    
+                    })
+                    /* ------ */
+                }
+            }
+        })
+        /* ---------------------------------------------- */
+    }
+})
+
+
+
+    </script>
+</body>
+</html>
